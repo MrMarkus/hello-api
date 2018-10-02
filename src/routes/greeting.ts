@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as redis from 'redis';
 
 export class Greeting { 
     
@@ -27,6 +28,24 @@ export class Greeting {
             let demoOutput = 'Hello ' + name + '!';
             res.status(200).send(demoOutput);
         })
+
+        // simple REDIS test
+        app.route('/redis-echo')
+        .get((req: express.Request, res: express.Response) => {            
+            const client = redis.createClient('redis://redis.mrmarkus-sandbox.svc:6379');
+            
+            client.on("error", function (err) {
+                console.log("REDIS error " + err);
+            });
+
+            client.set("redisecho", "testval " + new Date().toLocaleString(), redis.print);
+
+            client.quit;
+
+            let demoOutput = 'Redis echo done';
+            res.status(200).send(demoOutput);
+        })
+
 
     }
 }
